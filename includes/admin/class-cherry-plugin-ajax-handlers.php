@@ -49,8 +49,8 @@ if ( ! class_exists( 'Cherry_Comments_Ajax_Handlers' ) ) {
 			cherry_comments()->get_core()->init_module(
 				'cherry-handler' ,
 				array(
-					'id'           => 'cherry_comments_save_setting',
-					'action'       => 'cherry_comments_save_setting',
+					'id'           => 'cherry_save_setting',
+					'action'       => 'cherry_save_setting',
 					'capability'   => 'manage_options',
 					'callback'     => array( $this , 'ajax_save_options' ),
 					'sys_messages' => array(
@@ -65,8 +65,8 @@ if ( ! class_exists( 'Cherry_Comments_Ajax_Handlers' ) ) {
 			cherry_comments()->get_core()->init_module(
 				'cherry-handler' ,
 				array(
-					'id'           => 'cherry_comments_reset_setting',
-					'action'       => 'cherry_comments_reset_setting',
+					'id'           => 'cherry_reset_setting',
+					'action'       => 'cherry_reset_setting',
 					'capability'   => 'manage_options',
 					'callback'     => array( $this , 'ajax_reset_options' ),
 					'sys_messages' => array(

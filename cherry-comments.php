@@ -189,9 +189,6 @@ if ( ! class_exists( 'Cherry_Comments' ) ) {
 					'cherry-handler' => array(
 						'autoload' => false,
 					),
-					'cherry5-insert-shortcode' => array(
-						'autoload' => false,
-					),
 				),
 			) );
 
@@ -219,8 +216,8 @@ if ( ! class_exists( 'Cherry_Comments' ) ) {
 		 * @return void
 		 */
 		public function includes() {
+			require_once( CHERRY_COMMENTS_DIR . 'includes/class-cherry-plugin-options-manager.php' );
 			require_once( CHERRY_COMMENTS_DIR . 'includes/class-cherry-comments-options.php' );
-			require_once( CHERRY_COMMENTS_DIR . 'includes/class-cherry-comments-options-manager.php' );
 
 			if ( is_admin() ) {
 				require_once( CHERRY_COMMENTS_DIR . 'includes/admin/class-cherry-comments-admin.php' );

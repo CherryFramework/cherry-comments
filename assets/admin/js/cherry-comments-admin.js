@@ -1,20 +1,21 @@
 ( function( $, CherryJsCore ) {
 	'use strict';
 
-	CherryJsCore.utilites.namespace( 'blunkPlugin' );
-	CherryJsCore.blunkPlugin = {
+	CherryJsCore.utilites.namespace( 'cherryPlaginSaveOptionScripts' );
+	CherryJsCore.cherryPlaginSaveOptionScripts = {
 
-		saveHandlerId: 'cherry_comments_save_setting',
-		resetHandlerId: 'cherry_comments_reset_setting',
+		saveHandlerId: 'cherry_save_setting',
+		resetHandlerId: 'cherry_reset_setting',
 
-		saveButtonId: '#save-buttons',
-		resetButtonId: '#reset-buttons',
-		formId: '#option_form',
+		saveButtonId: '#cherry-save-buttons',
+		resetButtonId: '#cherry-reset-buttons',
+		formId: '#chery-search-options-form',
 
 		saveOptionsInstance: null,
 		resetOptionsInstance: null,
 
 		init: function() {
+			console.log(CherryJsCore.CherryAjaxHandler);
 			this.saveOptionsInstance = new CherryJsCore.CherryAjaxHandler(
 					{
 						handlerId: this.saveHandlerId,
@@ -135,5 +136,5 @@
 		}
 	};
 
-	CherryJsCore.blunkPlugin.init();
+	CherryJsCore.cherryPlaginSaveOptionScripts.init();
 }( jQuery, window.CherryJsCore ) );

@@ -37,9 +37,6 @@ if ( ! class_exists( 'Cherry_Comments_Admin' ) ) {
 			// Include libraries from the `includes/admin`
 			add_action( 'init', array( $this, 'includes' ), 9999 );
 
-			// Set default options
-			add_action( 'admin_init', array( 'Cherry_Comments_Options_Manager', 'set_default_options_in_db' ) );
-
 			// Load the admin menu.
 			add_action( 'admin_menu', array( $this, 'menu' ) );
 
@@ -58,7 +55,9 @@ if ( ! class_exists( 'Cherry_Comments_Admin' ) ) {
 		 * @return void
 		 */
 		public function includes() {
-			require_once( trailingslashit( CHERRY_COMMENTS_DIR ) . 'includes/admin/class-ajax-handlers.php' );
+
+			require_once( trailingslashit( CHERRY_COMMENTS_DIR ) . 'includes/admin/class-cherry-plugin-ajax-handlers.php' );
+
 			// Include plugin pages.
 			require_once( trailingslashit( CHERRY_COMMENTS_DIR ) . 'includes/admin/pages/class-plugin-options-page.php' );
 		}
@@ -71,27 +70,30 @@ if ( ! class_exists( 'Cherry_Comments_Admin' ) ) {
 		 * @return void
 		 */
 		public function menu() {
+			global $submenu;
+
+			add_menu_page(
+				esc_html__( 'Cherry Comments', 'cherry-comments' ),
+				esc_html__( 'Cherry Comments', 'cherry-comments' ),
+				'edit_theme_options',
+				'cherry-comments',
+				'',
+				'dashicons-comments',
+				100
+			);
+
 			add_submenu_page(
 				'cherry-comments',
-				esc_html__( 'Options Example', 'cherry-comments' ),
-				esc_html__( 'Options Example', 'cherry-comments' ),
+				esc_html__( 'Settings', 'cherry-comments' ),
+				esc_html__( 'Settings', 'cherry-comments' ),
 				'edit_theme_options',
-				'cherry-comments-options-page',
+				'cherry-comments-settings-page',
 				array( 'Cherry_Comments_Options_Page', 'get_instance' )
 			);
+
+			unset( $submenu['cherry-comments'][0] );
 		}
 
-		/**
-		 * Write default settings to database.
-		 *
-		 * @since 1.0.0
-		 * @access public
-		 * @return void
-		 */
-		public function set_default_options() {
-			$cherry_comments_options = new Cherry_Comments_Options_Manager();
-			$cherry_comments_options -> set_default_options_in_db();
-		}
 		/**
 		 * Enqueue admin stylesheets.
 		 *

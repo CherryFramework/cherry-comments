@@ -55,69 +55,19 @@ if ( ! class_exists( 'Cherry_Comments_Options_Page' ) ) {
 		 * @return void
 		 */
 		public function render_page() {
-			$this->builder->register_section(
-				$this->section
-			);
-			$this->builder->register_form(
-				$this->form
-			);
+			$this->builder->register_form( $this->form );
 
-			$this->builder->register_settings(
-				$this->ui_elements
-			);
-			$this->builder->register_control(
-				$this->ui_elements_options
-			);
+			$this->builder->register_section( $this->section );
 
-			$this->builder->register_settings(
-				$this->bi_elements
-			);
-			$this->builder->register_component(
-				$this->accordion
-			);
-			$this->builder->register_settings(
-				$this->accordion_settings
-			);
-			$this->builder->register_control(
-				$this->accordion_options
-			);
+			$this->builder->register_component( $this->component_tab );
 
-			$this->builder->register_component(
-				$this->toggle
-			);
-			$this->builder->register_settings(
-				$this->toggle_settings
-			);
-			$this->builder->register_control(
-				$this->toggle_options
-			);
+			$this->builder->register_settings( $this->tabs );
 
-			$this->builder->register_component(
-				$this->tab_vertical
-			);
-			$this->builder->register_settings(
-				$this->tab_vertical_settings
-			);
-			$this->builder->register_control(
-				$this->tab_vertical_options
-			);
+			$this->builder->register_html( $this->info );
 
-			$this->builder->register_component(
-				$this->tab_horizontal
-			);
-			$this->builder->register_settings(
-				$this->tab_horizontal_settings
-			);
-			$this->builder->register_control(
-				$this->tab_horizontal_options
-			);
+			$this->builder->register_control( $this->options );
 
-			$this->builder->register_settings(
-				$this->submit_buttons
-			);
-			$this->builder->register_control(
-				$this->options_button
-			);
+			$this->builder->register_control( $this->buttons );
 
 			$this->builder->render();
 		}
