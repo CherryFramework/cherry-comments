@@ -9,13 +9,12 @@
 
 		saveButtonId: '#cherry-save-buttons',
 		resetButtonId: '#cherry-reset-buttons',
-		formId: '#chery-search-options-form',
+		formId: '#chery-comments-options-form',
 
 		saveOptionsInstance: null,
 		resetOptionsInstance: null,
 
 		init: function() {
-			console.log(CherryJsCore.CherryAjaxHandler);
 			this.saveOptionsInstance = new CherryJsCore.CherryAjaxHandler(
 					{
 						handlerId: this.saveHandlerId,

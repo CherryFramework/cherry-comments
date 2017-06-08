@@ -34,6 +34,9 @@ if ( ! class_exists( 'Cherry_Comments_Admin' ) ) {
 		 */
 		public function __construct() {
 
+			// Initialization of modules.
+			add_action( 'admin_init', array( $this, 'init_modules' ), 11 );
+
 			// Include libraries from the `includes/admin`
 			add_action( 'init', array( $this, 'includes' ), 9999 );
 
@@ -45,6 +48,17 @@ if ( ! class_exists( 'Cherry_Comments_Admin' ) ) {
 
 			// Load admin JavaScripts.
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		}
+
+		/**
+		 * Run initialization of modules.
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 * @return void
+		 */
+		public function init_modules() {
+			cherry_comments()->get_core()->init_module( 'cherry-interface-builder', array() );
 		}
 
 		/**
@@ -126,7 +140,7 @@ if ( ! class_exists( 'Cherry_Comments_Admin' ) ) {
 				wp_enqueue_script(
 					'cherry-comments-admin',
 					esc_url( CHERRY_COMMENTS_URI . 'assets/admin/js/min/cherry-comments-admin.min.js' ),
-					array( 'cherry-js-core' ),
+					array( 'cherry-js-core', 'cherry-handler-js' ),
 					CHERRY_COMMENTS_VERSION,
 					true
 				);

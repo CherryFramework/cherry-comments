@@ -71,9 +71,6 @@ if ( ! class_exists( 'Cherry_Comments' ) ) {
 			// Laad the modules.
 			add_action( 'after_setup_theme', array( 'Cherry_Core', 'load_all_modules' ), 2 );
 
-			// Initialization of modules.
-			add_action( 'after_setup_theme', array( $this, 'init_modules' ), 3 );
-
 			// Load the include files.
 			add_action( 'after_setup_theme', array( $this, 'includes' ), 4 );
 
@@ -85,10 +82,6 @@ if ( ! class_exists( 'Cherry_Comments' ) ) {
 
 			// Load public-facing JavaScripts.
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 12 );
-
-			// Register activation and deactivation hook.
-			register_activation_hook( __FILE__, array( $this, 'activation' ) );
-			register_deactivation_hook( __FILE__, array( $this, 'deactivation' ) );
 		}
 
 		/**
@@ -193,19 +186,6 @@ if ( ! class_exists( 'Cherry_Comments' ) ) {
 			) );
 
 			return $this->core;
-		}
-
-		/**
-		 * Run initialization of modules.
-		 *
-		 * @since 1.0.0
-		 * @access public
-		 * @return void
-		 */
-		public function init_modules() {
-			if ( is_admin() ) {
-
-			}
 		}
 
 		/**

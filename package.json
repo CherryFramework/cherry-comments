@@ -1,0 +1,22 @@
+{
+  "name": "cherry-comments",
+  "version": "1.0.0",
+  "description": "WordPress plugin",
+  "main": "index.html",
+  "scripts": {
+    "webpack": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CherryFramework/cherry-comments.git"
+  },
+  "author": "makhonkodenis@gmail.com",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/CherryFramework/cherry-comments/issues"
+  },
+  "homepage": "https://github.com/CherryFramework/cherry-comments#readme",
+  "devDependencies": {
+    "webpack": "^2.6.1"
+  }
+}

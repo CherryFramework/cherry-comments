@@ -41,7 +41,7 @@ if ( ! class_exists( 'Cherry_Comments_Options_Page' ) ) {
 		 * @return void
 		 */
 		public function __construct() {
-			$this->builder = cherry_comments()->get_core()->init_module( 'cherry-interface-builder', array() );
+			$this->builder = cherry_comments()->get_core()->modules['cherry-interface-builder'];
 
 			parent::__construct();
 			$this->render_page();
@@ -63,7 +63,7 @@ if ( ! class_exists( 'Cherry_Comments_Options_Page' ) ) {
 
 			$this->builder->register_settings( $this->tabs );
 
-			$this->builder->register_html( $this->info );
+			//$this->builder->register_html( $this->info );
 
 			$this->builder->register_control( $this->options );
 

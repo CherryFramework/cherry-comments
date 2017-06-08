@@ -56,26 +56,6 @@ if ( ! class_exists( 'Cherry_Plugin_Options_Manager' ) ) {
 		}
 
 		/**
-		 * Set default plugin options.
-		 *
-		 * @since  1.0.0
-		 * @access public
-		 * @return array
-		 */
-		public function set_default_options_in_db() {
-			$options_default = $this->get_options( true );
-			$db_options_default = get_option( $this->slug . '-default', array() );
-
-			$diff_key = array_diff_key( $db_options_default, $options_default );
-
-			if ( ! empty( $diff_key ) ){
-				$this->save_options( $this->slug . '-default' , $options_default );
-			}
-
-			return $options_default;
-		}
-
-		/**
 		 * Get plugin options.
 		 *
 		 * @since 1.0.0
@@ -85,7 +65,7 @@ if ( ! class_exists( 'Cherry_Plugin_Options_Manager' ) ) {
 		public function get_option( $options_id = '', $get_default = false, $default_value = null ) {
 			$options = get_option( $this->slug, array() );
 
-			if ( ! empty( $options ) && isset( $options[ $options_id ] ) ) {
+			if ( ! empty( $options ) && isset( $options[ $options_id ] ) && ! $get_default ) {
 				return $options[ $options_id ];
 			} else if( null !== $default_value ) {
 				return $default_value;
@@ -115,13 +95,23 @@ if ( ! class_exists( 'Cherry_Plugin_Options_Manager' ) ) {
 		 * @return array
 		 */
 		protected function reset_options() {
-			$options_default = $this->set_default_options_in_db();
+			$options_default = $this->get_options( true );
+			$options_default =array_map( array( $this, 'get_value' ) , $options_default );
 
-			if ( ! $this->options || ! empty( $options_default ) ) {
-				$this->save_options( $this->slug, $options_default );
-			}
+			$this->save_options( $this->slug, $options_default );
 
 			return $options_default;
+		}
+
+		/**
+		 * Return option value.
+		 *
+		 * @since  1.0.0
+		 * @access private
+		 * @return objct
+		 */
+		private function get_value( $option = null ) {
+			return $option['value'];
 		}
 	}
 }

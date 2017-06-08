@@ -72,15 +72,6 @@ if ( ! class_exists( 'Cherry_Comments_Options' ) ) {
 		protected $buttons = null;
 
 		/**
-		 * Instance of the class Cherry_Utility.
-		 *
-		 * @since 1.0.0
-		 * @var object
-		 * @access private
-		 */
-		private $utility = null;
-
-		/**
 		 * HTML spinner.
 		 *
 		 * @since 1.0.0
@@ -115,13 +106,8 @@ if ( ! class_exists( 'Cherry_Comments_Options' ) ) {
 		 * @return void
 		 */
 		public function __construct() {
-			cherry_comments()->get_core()->init_module( 'cherry-utility', array() );
-			$this->utility = cherry_comments()->get_core()->modules['cherry-utility']->utility;
-
 			parent::__construct( CHERRY_COMMENTS_SLUG );
 			$this->set_component();
-
-			add_action( 'admin_init', array( $this, 'set_default_options_in_db' ) );
 		}
 
 
@@ -134,14 +120,14 @@ if ( ! class_exists( 'Cherry_Comments_Options' ) ) {
 		 */
 		private function set_component( $get_default = false ) {
 			$this->form = array(
-				'chery-search-options-form' => array(),
+				'chery-comments-options-form' => array(),
 			);
 
 			$this->section = array(
 				'cherry-comments-section' => array(
 					'type'          => 'section',
-					'parent'        => 'chery-search-options-form',
-					'title'         => '<span class="dashicons dashicons-search"></span>' . esc_html__( 'Cherry Search Settings', 'cherry-comments' ),
+					'parent'        => 'chery-comments-options-form',
+					'title'         => '<span class="dashicons dashicons-admin-comments"></span>' . esc_html__( 'Cherry Comments Settings', 'cherry-comments' ),
 				),
 			);
 
@@ -153,26 +139,26 @@ if ( ! class_exists( 'Cherry_Comments_Options' ) ) {
 			);
 
 			$this->tabs = array(
-				'main'            => array(
+				'comment_list'            => array(
 					'type'   => 'options',
 					'parent' => 'cherry-comments-tab',
 					'scroll' => true,
-					'title'  => esc_html__( 'Main options', 'cherry-comments' ),
+					'title'  => esc_html__( 'Comment List', 'cherry-comments' ),
 				),
-				'query_options'  => array(
+				'singl_comment'  => array(
 					'type'   => 'options',
 					'parent' => 'cherry-comments-tab',
 					'scroll' => true,
-					'title'  => esc_html__( 'Search results options', 'cherry-comments' ),
+					'title'  => esc_html__( 'Single Comment', 'cherry-comments' ),
 				),
-				'visual_options' => array(
+				'comment_form' => array(
 					'type'   => 'options',
 					'parent' => 'cherry-comments-tab',
 					'scroll' => true,
-					'title'  => esc_html__( 'Visual options', 'cherry-comments' ),
+					'title'  => esc_html__( 'Comment Form', 'cherry-comments' ),
 				),
 				'notices' => array(
-					'type'   => 'options',
+					'type'   => 'settings',
 					'parent' => 'cherry-comments-tab',
 					'scroll' => true,
 					'title'  => esc_html__( 'Notifications', 'cherry-comments' ),
@@ -183,7 +169,7 @@ if ( ! class_exists( 'Cherry_Comments_Options' ) ) {
 				),
 			);
 
-			$this->info = array(
+			/*$this->info = array(
 				'form_html'  => array(
 					'type'       => 'html',
 					'parent'     => 'main',
@@ -196,7 +182,7 @@ if ( ! class_exists( 'Cherry_Comments_Options' ) ) {
 						esc_html__( 'Add PHP code to the necessaryfiles of your theme:', 'cherry-comments' ) . '<code class ="cherry-code-example">' . htmlspecialchars( '<?php if ( function_exists( \'cherry_get_search_form\' ) ) { cherry_get_search_form(); } ?>' ) . '</code>'
 					),
 				),
-			);
+			);*/
 
 			$this->options = $this->get_options();
 
@@ -229,299 +215,292 @@ if ( ! class_exists( 'Cherry_Comments_Options' ) ) {
 		 */
 		protected function get_options( $get_default = false ) {
 			return array(
-// Main Settings
-				'change_standard_search' => array(
+
+// Comment List
+				'comment_count' => array(
+					'type'       => 'stepper',
+					'parent'     => 'comment_list',
+					'title'      => esc_html__( 'Comment count on page.', 'cherry-comments' ),
+					'value'      => $this->get_option( 'comment_count', $get_default, 50 ),
+					'max_value'  => 500,
+					'min_value'  => 10,
+					'step_value' => 1,
+				),
+				'deep_comment_count' => array(
+					'type'       => 'stepper',
+					'parent'     => 'comment_list',
+					'title'      => esc_html__( 'The number of comment levels deep.', 'cherry-comments' ),
+					'value'      => $this->get_option( 'deep_comment_count', $get_default, 5 ),
+					'max_value'  => 10,
+					'min_value'  => 2,
+					'step_value' => 1,
+				),
+				'sort_comments_by' => array(
 					'type'         => 'switcher',
-					'parent'       => 'main',
-					'title'        => esc_html__( 'Replace the standard search form.', 'cherry-comments' ),
-					'description'  => esc_html__( 'This option allows to replace all the standard search forms on your website.', 'cherry-comments' ),
-					'value'        => $this->get_option( 'change_standard_search', $get_default, true ),
+					'parent'       => 'comment_list',
+					'title'        => esc_html__( 'Enable Sort filter.', 'cherry-comments' ),
+					'value'        => $this->get_option( 'sort_comments_by', $get_default, true ),
+					'toggle'       => array(
+						'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
+						'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
+					),
+					'lock'         => true,
+				),
+				'enable_comment_count' => array(
+					'type'         => 'switcher',
+					'parent'       => 'comment_list',
+					'title'        => esc_html__( 'Enable comment counter.', 'cherry-comments' ),
+					'value'        => $this->get_option( 'enable_comment_count', $get_default, true ),
 					'toggle'       => array(
 						'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
 						'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
 					),
 				),
-				'search_button_icon' => array(
-					'type'        => 'iconpicker',
-					'parent'      => 'main',
-					'title'       => esc_html__( 'Search Button Icon.', 'cherry-comments' ),
-					'description' => esc_html__( 'This option sets search button text.', 'cherry-comments' ),
-					'value'       => $this->get_option( 'search_button_icon', $get_default, '' ),
-					'auto_parse'  => true,
-					'icon_data'   => apply_filters( 'cherry_comments_button_icon', $this->get_icons_set() ),
-				),
-				'search_button_text' => array(
-					'type'        => 'text',
-					'parent'      => 'main',
-					'title'       => esc_html__( 'Search Button Text.', 'cherry-comments' ),
-					'description' => esc_html__( 'This option sets search button text.', 'cherry-comments' ),
-					'value'       => $this->get_option( 'search_button_text', $get_default, '' ),
-				),
-				'search_placeholder_text' => array(
-					'type'        => 'text',
-					'parent'      => 'main',
-					'title'       => esc_html__( 'Caption / Placeholder text.', 'cherry-comments' ),
-					'description' => esc_html__( 'This option sets placeholder text in input field.', 'cherry-comments' ),
-					'value'       => $this->get_option( 'search_placeholder_text', $get_default, esc_html__( 'Search', 'cherry-comments' ) ),
-				),
 
-// Search Query Settings
-				'search_source' => array(
-					'type'        => 'select',
-					'parent'      => 'query_options',
-					'title'       => esc_html__( 'Search in.', 'cherry-comments' ),
-					'description' => esc_html__( 'You can select particular search areas. If nothing is selected in the option, search will be made over the entire site.', 'cherry-comments' ),
-					'multiple'    => true,
-					'filter'      => true,
-					'value'       => $this->get_option( 'search_source', $get_default, array( 'any' ) ),
-					'options'     => $this->get_search_source(),
-					'placeholder' => esc_html__( 'Selected search source.', 'cherry-comments' ),
-				),
-				'exclude_source_category' => array(
-					'type'        => 'select',
-					'parent'      => 'query_options',
-					'title'       => esc_html__( 'Exclude categories from search results.', 'cherry-comments' ),
-					'description' => esc_html__( 'This option allows to set categories in which search will not be made.', 'cherry-comments' ),
-					'multiple'    => true,
-					'filter'      => true,
-					'value'       => $this->get_option( 'exclude_source_category', $get_default, 'projects' ),
-					'options'     => $this->utility->satellite->get_terms_array( $this->get_categories() ),
-					'placeholder' => esc_html__( 'Not selected categories.', 'cherry-comments' ),
-				),
-				'exclude_source_tags' => array(
-					'type'        => 'select',
-					'parent'      => 'query_options',
-					'title'       => esc_html__( 'Exclude tags from search results.', 'cherry-comments' ),
-					'description' => esc_html__( 'This option allows to set tags in which search will not be made.', 'cherry-comments' ),
-					'multiple'    => true,
-					'filter'      => true,
-					'value'       => $this->get_option( 'exclude_source_tags', $get_default, '' ),
-					'options'     => $this->utility->satellite->get_terms_array( $this->get_tags() ),
-					'placeholder' => esc_html__( 'Not selected tags.', 'cherry-comments' ),
-				),
-				'exclude_source_post_format' => array(
-					'type'        => 'select',
-					'parent'      => 'query_options',
-					'title'       => esc_html__( 'Exclude post types from search results.', 'cherry-comments' ),
-					'description' => esc_html__( 'This option allows to post types in which search will not be made.', 'cherry-comments' ),
-					'multiple'    => true,
-					'filter'      => true,
-					'value'       => $this->get_option( 'exclude_source_post_format', $get_default, '' ),
-					'options'     => $this->utility->satellite->get_terms_array( 'post_format' ),
-					'placeholder' => esc_html__( 'Not selected post formats.', 'cherry-comments' ),
-				),
-				'limit_query' => array(
-					'type'        => 'stepper',
-					'parent'      => 'query_options',
-					'title'       => esc_html__( 'Number of results displayed in one search query.', 'cherry-comments' ),
-					'description' => esc_html__( 'This option will allow you to limit the number of displayed search results. If the overall number of results will exceeed the previously set limit, the "load more" button will come up..', 'cherry-comments' ),
-					'value'       => $this->get_option( 'limit_query', $get_default, 5 ),
-					'max_value'   => 50,
-					'min_value'   => 0,
-					'step_value'  => 1,
-				),
-				'results_order_by' => array(
-					'type'    => 'radio',
-					'parent'  => 'query_options',
-					'title'   => esc_html__( 'Sort search results by:', 'cherry-comments' ),
-					'value'   => $this->get_option( 'results_order_by', $get_default, 'date' ),
-					'options' => array(
-						'date'          => array(
-							'label' => esc_html__( 'Date', 'cherry-comments' ),
-						),
-						'title'         => array(
-							'label' => esc_html__( 'Title', 'cherry-comments' ),
-						),
-						'autohr'        => array(
-							'label' => esc_html__( 'Author', 'cherry-comments' ),
-						),
-						'modified'      => array(
-							'label' => esc_html__( 'Last modified', 'cherry-comments' ),
-						),
-						'comment_count' => array(
-							'label' => esc_html__( 'Number of Comments (descending)', 'cherry-comments' ),
-						),
-					),
-				),
-				'results_order'           => array(
-					'type'    => 'radio',
-					'parent'  => 'query_options',
-					'title'   => esc_html__( 'Filter results by: ', 'cherry-comments' ),
-					'value'   => $this->get_option( 'results_order', $get_default, 'asc' ),
-					'options' => array(
-						'asc'  => array(
-							'label' => esc_html__( 'Asc', 'cherry-comments' ),
-						),
-						'desc' => array(
-							'label' => esc_html__( 'Desc', 'cherry-comments' ),
-						),
-					),
-				),
-
-// Visual Tuning
-				'title_visible' => array(
+// Singl Comment
+				'author_gavatar' => array(
 					'type'   => 'switcher',
-					'parent' => 'visual_options',
-					'title'  => esc_html__( 'Show post titles.', 'cherry-comments' ),
-					'value'  => $this->get_option( 'title_visible', $get_default, true ),
+					'parent' => 'singl_comment',
+					'title'  => esc_html__( 'Enable author gavatar.', 'cherry-comments' ),
+					'value'  => $this->get_option( 'author_gavatar', $get_default, true ),
 					'toggle' => array(
 						'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
 						'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
-					),
-				),
-				'limit_content_word' => array(
-					'type'       => 'stepper',
-					'parent'     => 'visual_options',
-					'title'      => esc_html__( 'Post word count.', 'cherry-comments' ),
-					'value'      => $this->get_option( 'limit_content_word', $get_default, apply_filters( 'cherry_comments_limit_content_word', 50 ) ),
-					'max_value'  => 150,
-					'min_value'  => 0,
-					'step_value' => 1,
-				),
-				'author_visible' => array(
-					'type'   => 'switcher',
-					'parent' => 'visual_options',
-					'title'  => esc_html__( 'Show post authors.', 'cherry-comments' ),
-					'value'  => $this->get_option( 'author_visible', $get_default, true ),
-					'toggle' => array(
-						'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
-						'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
-						'true_slave'   => 'author_prefix',
 					),
 				),
 				'author_prefix' => array(
-					'type'   => 'text',
-					'parent' => 'visual_options',
-					'title'  => esc_html__( 'Prefix before author`s name.', 'cherry-comments' ),
-					'value'  => $this->get_option( 'author_prefix', $get_default, esc_html__( 'Posted by:', 'cherry-comments' ) ),
-					'master' => 'author_visible',
+					'type'   => 'textarea',
+					'parent' => 'singl_comment',
+					'title'  => esc_html__( 'Prefix before author`s name.', 'cherry-search' ),
+					'value'  => $this->get_option( 'author_prefix', $get_default, esc_html__( 'Posted by', 'cherry-search' ) ),
 				),
-				'thumbnail_visible' => array(
+				'comment_date' => array(
 					'type'   => 'switcher',
-					'parent' => 'visual_options',
-					'title'  => esc_html__( 'Show post thumbnails.', 'cherry-comments' ),
-					'value'  => $this->get_option( 'thumbnail_visible', $get_default, true ),
+					'parent' => 'singl_comment',
+					'title'  => esc_html__( 'Enable comment public date.', 'cherry-comments' ),
+					'value'  => $this->get_option( 'comment_date', $get_default, true ),
 					'toggle' => array(
 						'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
 						'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
+						'true_slave'   => 'comment_data_prefix',
 					),
 				),
-				'enable_scroll'  => array(
+				'comment_data_prefix'      => array(
+					'type'   => 'textarea',
+					'parent' => 'singl_comment',
+					'title'  => esc_html__( 'Prefix before publish date.', 'cherry-search' ),
+					'value'  => $this->get_option( 'comment_data_prefix', $get_default, esc_html__( 'Publict date', 'cherry-search' ) ),
+					'master' => 'comment_date',
+				),
+				'comment_link' => array(
 					'type'   => 'switcher',
-					'parent' => 'visual_options',
-					'title'  => esc_html__( 'Enable scrolling for dropdown lists.', 'cherry-comments' ),
-					'value'  => $this->get_option( 'enable_scroll', $get_default, true ),
+					'parent' => 'singl_comment',
+					'title'  => esc_html__( 'Enable comment link.', 'cherry-comments' ),
+					'value'  => $this->get_option( 'comment_link', $get_default, true ),
 					'toggle' => array(
 						'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
 						'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
-						'true_slave'   => 'result_area_height',
+						'true_slave'   => 'comment_link_prefix',
 					),
 				),
-				'result_area_height' => array(
+				'comment_link_prefix'      => array(
+					'type'   => 'textarea',
+					'parent' => 'singl_comment',
+					'title'  => esc_html__( 'Prefix before comment link.', 'cherry-search' ),
+					'value'  => $this->get_option( 'negative_search', $get_default, esc_html__( 'Sorry, but nothing matched your search terms.', 'cherry-search' ) ),
+					'master' => 'comment_link',
+				),
+				'hide_long_comment' => array(
+					'type'   => 'switcher',
+					'parent' => 'singl_comment',
+					'title'  => esc_html__( 'Hide Long Comment.', 'cherry-comments' ),
+					'value'  => $this->get_option( 'hide_long_comment', $get_default, true ),
+					'toggle' => array(
+						'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
+						'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
+						'true_slave'   => 'comment_area',
+					),
+				),
+				'comment_area' => array(
 					'type'       => 'stepper',
-					'parent'     => 'visual_options',
-					'title'      => esc_html__( 'Dropdown list height.', 'cherry-comments' ),
-					'value'      => $this->get_option( 'result_area_height', $get_default, 500 ),
+					'parent'     => 'singl_comment',
+					'title'      => esc_html__( 'comment_area.', 'cherry-comments' ),
+					'value'      => $this->get_option( 'comment_area', $get_default, 100 ),
 					'max_value'  => 500,
-					'min_value'  => 0,
+					'min_value'  => 100,
 					'step_value' => 1,
-					'master'     => 'enable_scroll',
+					'master' => 'hide_long_comment',
 				),
-				'more_button'      => array(
-					'type'   => 'text',
-					'parent' => 'visual_options',
-					'title'  => esc_html__( '"View more" button text.', 'cherry-comments' ),
-					'value'  => $this->get_option( 'more_button', $get_default, esc_html__( 'View more.', 'cherry-comments' ) ),
-					'master' => 'more_button',
+
+// Comment Form
+				'smileys_in_comment' => array(
+					'type'   => 'switcher',
+					'parent' => 'comment_form',
+					'title'  => esc_html__( 'Enable smileys for comment.', 'cherry-comments' ),
+					'value'  => $this->get_option( 'smileys_in_comment', $get_default, true ),
+					'toggle' => array(
+						'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
+						'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
+					),
 				),
-				'prev_button'      => array(
-					'type'   => 'text',
-					'parent' => 'visual_options',
-					'title'  => esc_html__( '"Prev" button text.', 'cherry-comments' ),
-					'value'  => $this->get_option( 'prev_button', $get_default, esc_html__( '< Prev', 'cherry-comments' ) ),
-					'master' => 'navigation_button_element',
+				'comment_words_count' => array(
+					'type'       => 'stepper',
+					'parent'     => 'comment_form',
+					'title'      => esc_html__( 'comment_words_count.', 'cherry-comments' ),
+					'value'      => $this->get_option( 'comment_words_count', $get_default, 150 ),
+					'max_value'  => 500,
+					'min_value'  => 1,
+					'step_value' => 1,
 				),
-				'next_button'      => array(
-					'type'   => 'text',
-					'parent' => 'visual_options',
-					'title'  => esc_html__( '"Next" button text.', 'cherry-comments' ),
-					'value'  => $this->get_option( 'next_button', $get_default, esc_html__( 'Next >', 'cherry-comments' ) ),
-					'master' => 'navigation_button_element',
+				'comment_form_builder'  => array(
+					'type'         => 'repeater',
+					'parent'       => 'comment_form',
+					'title'        => esc_html__( 'Build comment form', 'cherry-comments' ),
+					'add_label'    => esc_html__( 'Add field', 'cherry-comments' ),
+					'title_field'  => 'field_type',
+					'hidden_input' => true,
+					'fields'       => array(
+						'field_type' => array(
+							'type'        => 'select',
+							'name'        => 'field_type',
+							'id'          => 'field_type',
+							'label'       => esc_html__( 'Field type', 'cherry-search' ),
+							//'description' => esc_html__( 'You can select particular search areas. If nothing is selected in the option, search will be made over the entire site.', 'cherry-search' ),
+							'multiple'    => false,
+							'filter'      => false,
+							'options'     => $this->get_field_type(),
+							'placeholder' => esc_html__( 'Selected field type.', 'cherry-search' ),
+						),
+						'required' => array(
+							'type'   => 'switcher',
+							'name'   => 'required',
+							'id'     => 'required',
+							'label'  => esc_html__( 'Required', 'cherry-comments' ),
+							'value'  => 'always',
+							'toggle' => array(
+								'true_toggle'  => esc_html__( 'Yes', 'cherry-comments' ),
+								'false_toggle' => esc_html__( 'No', 'cherry-comments' ),
+							),
+						),
+						'lable' => array(
+							'type'        => 'text',
+							'id'          => 'lable',
+							'name'        => 'lable',
+							'placeholder' => esc_html__( 'Lable', 'cherry-comments' ),
+							'label'       => esc_html__( 'Field Lable', 'cherry-comments' ),
+						),
+						'placeholder' => array(
+							'type'        => 'text',
+							'id'          => 'placeholder',
+							'name'        => 'placeholder',
+							'placeholder' => esc_html__( 'Placeholder', 'cherry-comments' ),
+							'label'       => esc_html__( 'Placeholder', 'cherry-comments' ),
+						),
+						'visibility' => array(
+							'type'        => 'select',
+							'name'        => 'visibility',
+							'id'          => 'visibility',
+							'label'       => esc_html__( 'Visibility', 'cherry-search' ),
+							//'description' => esc_html__( 'You can select particular search areas. If nothing is selected in the option, search will be made over the entire site.', 'cherry-search' ),
+							'multiple'    => false,
+							'filter'      => false,
+							'options'     => $this->get_visibility_state(),
+							'placeholder' => esc_html__( 'Selected visibility state.', 'cherry-search' ),
+						),
+					),
+					'value'       => $this->get_option( 'comment_form_builder', $get_default,
+						array(
+							'item-0' => array (
+								'lable'      => esc_html__( 'Name', 'cherry-search' ),
+								'field_type' => 'name',
+								'required'    => true,
+								'placeholder' => esc_html__( 'Enter your name', 'cherry-search' ),
+								'visibility'  => 'not_registered_user',
+							),
+							'item-1' => array (
+								'lable'      => esc_html__( 'Mail', 'cherry-search' ),
+								'field_type' => 'mail',
+								'required'    => true,
+								'placeholder' => esc_html__( 'Enter your e-mail', 'cherry-search' ),
+								'visibility'  => 'not_registered_user',
+							),
+							'item-2' => array (
+								'lable'       => esc_html__( 'Website url', 'cherry-search' ),
+								'field_type'  => 'website',
+								'required'    => true,
+								'placeholder' => esc_html__( 'Enter your website url', 'cherry-search' ),
+								'visibility'  => 'not_registered_user',
+							),
+							'item-3' => array (
+								'lable'      => esc_html__( 'Comment', 'cherry-search' ),
+								'field_type' => 'comment',
+								'required'    => true,
+								'placeholder' => esc_html__( 'Enter your website url', 'cherry-search' ),
+								'visibility'  => 'always',
+							),
+						)
+					),
 				),
 
 // Notice Messages
-				'negative_search'      => array(
-					'type'          => 'text',
+				'invalid_field_notice'      => array(
+					'type'          => 'textarea',
 					'parent'        => 'notices',
-					'title'         => esc_html__( 'Negative search results.', 'cherry-comments' ),
-					'value'         => $this->get_option( 'negative_search', $get_default, esc_html__( 'Sorry, but nothing matched your search terms.', 'cherry-comments' ) ),
+					'title'         => esc_html__( 'invalid_field_notice.', 'cherry-search' ),
+					'value'         => $this->get_option( 'negative_search', $get_default, esc_html__( 'Sorry, but nothing matched your search terms.', 'cherry-search' ) ),
 				),
 
-				'server_error'      => array(
-					'type'          => 'text',
+				'accaunt_is_bann'      => array(
+					'type'          => 'textarea',
 					'parent'        => 'notices',
-					'title'         => esc_html__( 'Technical error.', 'cherry-comments' ),
-					'value'         => $this->get_option( 'server_error', $get_default, esc_html__( 'Sorry, but we cannot handle your search query now. Please, try again later!', 'cherry-comments' ) ),
+					'title'         => esc_html__( 'accaunt_is_bann.', 'cherry-search' ),
+					'value'         => $this->get_option( 'server_error', $get_default, esc_html__( 'Sorry, but we cannot handle your search query now. Please, try again later!', 'cherry-search' ) ),
+				),
+				'successful'      => array(
+					'type'          => 'textarea',
+					'parent'        => 'notices',
+					'title'         => esc_html__( 'Technical error.', 'cherry-search' ),
+					'value'         => $this->get_option( 'server_error', $get_default, esc_html__( 'Sorry, but we cannot handle your search query now. Please, try again later!', 'cherry-search' ) ),
 				),
 			);
 		}
 
 		/**
-		 * Get icons set
+		 * Return field visibility state.
 		 *
 		 * @since 1.0.0
 		 * @access private
 		 * @return array
 		 */
-		private function get_icons_set() {
-			return array(
-				'icon_set'    => 'cherryWidgetFontAwesome',
-				'icon_css'    => esc_url( CHERRY_COMMENTS_URI . 'assets/css/min/font-awesome.min.css' ),
-				'icon_base'   => 'fa',
+		private function get_visibility_state() {
+			return apply_filters(
+				'cherry_comments__field_visibility_states',
+				array(
+					'always'    => esc_html__( 'always', 'cherry-comments' ),
+					'registered_user' => esc_html__( 'registered_user', 'cherry-comments' ),
+					'not_registered_user' => esc_html__( 'not_registered_user', 'cherry-comments' ),
+					'hide'    => esc_html__( 'hide', 'cherry-comments' ),
+				)
 			);
 		}
-
 		/**
-		 * Get search source.
+		 * Return field type.
 		 *
 		 * @since 1.0.0
 		 * @access private
 		 * @return array
 		 */
-		private function get_search_source() {
-			$sources = get_post_types( '', 'objects' );
-			$exude   = array( 'revision', 'nav_menu_item' );
-			$output  = array();
-			if ( $sources ) {
-				foreach ( $sources as $key => $value ) {
-					if ( ! in_array( $key, $exude ) ) {
-						$output[ $value->name ] = ucfirst( $value->label );
-					}
-				}
-			}
-			return $output;
-		}
-
-		/**
-		 * .
-		 *
-		 * @since 1.0.0
-		 * @access private
-		 * @return array
-		 */
-		private function get_categories() {
-			return apply_filters( 'cherry_comments_support_categories', array( 'category', 'projects_category', 'product_cat' ) );
-		}
-
-		/**
-		 * .
-		 *
-		 * @since 1.0.0
-		 * @access private
-		 * @return array
-		 */
-		private function get_tags() {
-			return apply_filters( 'cherry_comments_support_tags', array( 'post_tag', 'projects_tag', 'product_tag' ) );
+		private function get_field_type() {
+			return apply_filters(
+				'cherry_comments__field_types',
+				array(
+					'name'    => esc_html__( 'Name', 'cherry-comments' ),
+					'mail'    => esc_html__( 'Mail', 'cherry-comments' ),
+					'website' => esc_html__( 'User Website', 'cherry-comments' ),
+					'comment' => esc_html__( 'Comment', 'cherry-comments' ),
+					'captcha' => esc_html__( 'Captcha', 'cherry-comments' ),
+				)
+			);
 		}
 	}
 }

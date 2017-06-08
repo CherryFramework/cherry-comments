@@ -9,13 +9,13 @@
  * @copyright  2012-2016, Cherry Team
  */
 
-// If class `Cherry_Comments_Ajax_Handlers` doesn't exists yet.
-if ( ! class_exists( 'Cherry_Comments_Ajax_Handlers' ) ) {
+// If class `Cherry_Plugin_Ajax_Handlers` doesn't exists yet.
+if ( ! class_exists( 'Cherry_Plugin_Ajax_Handlers' ) ) {
 
 	/**
-	 * Cherry_Comments_Ajax_Handlers class.
+	 * Cherry_Plugin_Ajax_Handlers class.
 	 */
-	class Cherry_Comments_Ajax_Handlers extends Cherry_Comments_Options {
+	class Cherry_Plugin_Ajax_Handlers extends Cherry_Comments_Options {
 
 		/**
 		 * A reference to an instance of this class.
@@ -123,7 +123,7 @@ if ( ! class_exists( 'Cherry_Comments_Ajax_Handlers' ) ) {
 
 }
 
-if ( ! function_exists( 'cherry_comments_ajax_handlers' ) ) {
+if ( ! function_exists( 'cherry_plugin_ajax_handlers' ) ) {
 
 	/**
 	 * Returns instanse of the plugin class.
@@ -131,9 +131,9 @@ if ( ! function_exists( 'cherry_comments_ajax_handlers' ) ) {
 	 * @since  1.0.0
 	 * @return object
 	 */
-	function cherry_comments_ajax_handlers() {
-		return Cherry_Comments_Ajax_Handlers::get_instance();
+	function cherry_plugin_ajax_handlers() {
+		return Cherry_Plugin_Ajax_Handlers::get_instance();
 	}
 
-	cherry_comments_ajax_handlers();
+	cherry_plugin_ajax_handlers();
 }
